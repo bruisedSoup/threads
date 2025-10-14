@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-
 import SettingsIcon from '../../app/profile/settingsicon.jsx';
 import UnpaidIcon from '../../app/profile/myordersicon/unpaidicon.jsx';
 import ProcessingIcon from '../../app/profile/myordersicon/processingincon.jsx';
@@ -10,70 +9,19 @@ import ReviewIcon from '../../app/profile/myordersicon/reviewicon.jsx';
 import ReturnsIcon from '../../app/profile/myordersicon/returnsicon.jsx';
 import WishlistIcon from '../../app/profile/wishlisticon/wishlisticon.jsx';
 import FollowingsIcon from '../../app/profile/wishlisticon/followingsicon.jsx';
-
-import MasonryList from '@react-native-seoul/masonry-list';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-const IMAGE_HEIGHTS = [250, 270, 290];
-
-// wishlist data
-const wishlistData = [
-  {
-    id: '1',
-    title: 'Summer Cami Top',
-    price: 428,
-    rating: 4.0,
-    image: require('../../assets/clothing/tops/summer_cami.jpg'),
-  },
-  {
-    id: '2',
-    title: 'Lace-A line skirt',
-    price: 147.75,
-    rating: 5.0,
-    image: require('../../assets/clothing/bottoms/lace_skirt.jpg'),
-  },
-  {
-    id: '3',
-    title: 'Fairycore Camisole Top',
-    price: 250,
-    rating: 4.2,
-    image: require('../../assets/clothing/tops/fairycore.jpg'),
-  },
-  {
-    id: '4',
-    title: 'Blue Corset Top',
-    price: 180,
-    rating: 4.8,
-    image: require('../../assets/clothing/tops/blue_corset_top.png'),
-  },
-];
-
-// Randomly assign image heights for the masonry effect
-const assignImageHeights = array =>
-  array.map(item => ({
-    ...item,
-    imageHeight: IMAGE_HEIGHTS[Math.floor(Math.random() * IMAGE_HEIGHTS.length)],
-  }));
+import ProductSuggestions from '../components/ProductSuggestions';
+import { products } from '../data/product';
 
 const Profile = () => {
   const router = useRouter();
-
-  const handleSettingsPress = () => {
-    router.push('/profile/settings');
-  };
-
+  const handleSettingsPress = () => { router.push('/profile/settings'); };
   const handleAvatarPress = () => {
     router.push({
       pathname: '/profile/userprofile',
-      params: {
-        profilePicture: 'static_avatar',
-      }
-    }); 
+      params: { profilePicture: 'static_avatar' },
+    });
   };
-
-  const handleTabPress = route => {
-    router.push(route);
-  };
+  const handleTabPress = route => { router.push(route); };
 
   const userData = {
     name: 'User One',
@@ -81,39 +29,12 @@ const Profile = () => {
     profilePicture: require('../../app/profile/static_avatar.jpg'),
   };
 
-  //product list with random image heights
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-    setProducts(assignImageHeights(wishlistData));
-  }, []);
-
-  const renderProduct = ({ item }) => (
-  <TouchableOpacity
-    activeOpacity={0.105}
-  >
-    <View style={styles.card}>
-      <Image
-        source={item.image}
-        style={[styles.itemImage, { height: item.imageHeight }]}
-        resizeMode="cover"
-      />
-      <View style={styles.cardContent}>
-        <Text style={styles.itemTitle}>{item.title}</Text>
-        <Text style={styles.itemPrice}>{`Php${item.price}`}</Text>
-        {item.rating && (
-          <View style={styles.ratingContainer}>
-            <Text style={styles.star}>⭐</Text>
-            <Text style={styles.itemRating}>{item.rating}</Text>
-          </View>
-        )}
-      </View>
-      <TouchableOpacity style={styles.heartButton}>
-        <Icon name="heart" size={18} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  </TouchableOpacity>
-);
-
+  const productsFlat = products.flatMap(store =>
+    store.products.map(product => ({
+      ...product,
+      storeName: store.storeName,
+    }))
+  );
 
   return (
     <View style={styles.container}>
@@ -122,7 +43,6 @@ const Profile = () => {
         <TouchableOpacity style={styles.settingsButton} onPress={handleSettingsPress}>
           <SettingsIcon width={27} height={27} />
         </TouchableOpacity>
-
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <TouchableOpacity
@@ -209,40 +129,26 @@ const Profile = () => {
           <View style={styles.twoColumnsContainer}>
             <View style={styles.columnContainer}>
               <Text style={styles.columnTitle}>Wishlist</Text>
-              <TouchableOpacity
-                style={styles.columnItem}
-                onPress={() => handleTabPress('/tabs/likes')}
-                activeOpacity={0.7}
-              >
+              <TouchableOpacity style={styles.columnItem} onPress={() => handleTabPress('/tabs/likes')} activeOpacity={0.7}>
                 <WishlistIcon width={24} height={24} />
                 <Text style={styles.columnText}>4 wishlist</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.columnContainer}>
               <Text style={styles.columnTitle}>Followings</Text>
-              <TouchableOpacity
-                style={styles.columnItem}
-                onPress={() => handleTabPress('/profile/following')}
-                activeOpacity={0.7}
-              >
+              <TouchableOpacity style={styles.columnItem} onPress={() => handleTabPress('/profile/following')} activeOpacity={0.7}>
                 <FollowingsIcon width={24} height={24} />
                 <Text style={styles.columnText}>1 followings</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
-
-        {/* Masonry Product List */}
-        <View style={{ flex: 1 }}>
-          <MasonryList
-            data={products}
-            keyExtractor={item => item.id}
-            numColumns={2}
-            renderItem={renderProduct}
-            contentContainerStyle={{ padding: 8, paddingBottom: 60 }}
-            showsVerticalScrollIndicator={false}
-          />
-        </View> 
+        {/* Product Grid */}
+        <ProductSuggestions
+          products={productsFlat}
+          title="You May Also Like"
+          numColumns={2}
+        />
       </ScrollView>
     </View>
   );
@@ -251,7 +157,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff',  
   },
   fixedHeader: {
     position: 'absolute',
@@ -308,7 +214,6 @@ const styles = StyleSheet.create({
     width: '105%',
     alignSelf: 'center',
     minHeight: 200,
-    
   },
   ordersContainer: {
     marginTop: -10,
@@ -391,70 +296,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
     textAlign: 'center',
-  },
-  productsHeader: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginLeft: 18,
-    marginTop: 20,
-    marginBottom: 12,
-    color: '#292526',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    margin: 6,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    overflow: 'hidden',
-    width: '85%',
-    alignSelf: 'center',
-  },
-  itemImage: {
-    width: '100%',
-    borderRadius: 12,
-  },
-  cardContent: {
-    padding: 12,
-    paddingBottom: 16,
-  },
-  itemTitle: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 4,
-    lineHeight: 18,
-  },
-  itemPrice: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  star: {
-    fontSize: 12,
-    marginRight: 4,
-  },
-  itemRating: {
-    fontSize: 12,
-    color: '#666',
-  },
-  heartButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#292526',
-    borderRadius: 20,
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 

@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import SearchBar from '../../components/search';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import BackIcon from '../backicon';
 import CustomSearchBar from '../../components/CustomSearch';
 import EmptyIcon from '../../components/empty';
+import ProductSuggestions from '../../components/ProductSuggestions';
+import { products } from '../../data/product';
+import StoreIcon from '../../components/storeicon';
+
 
 const AllOrders = () => {
-  // Grab initialTab parameter from navigation (query string)
   const { initialTab } = useLocalSearchParams();
   const [activeTab, setActiveTab] = useState(initialTab || 'All orders');
   const router = useRouter();
 
-  const handleBackPress = () => {
-    router.back();
-  };
+  const handleBackPress = () => router.back();
 
   const tabs = [
     { key: 'All orders', label: 'All orders' },
@@ -25,7 +25,7 @@ const AllOrders = () => {
     { key: 'Returns', label: 'Returns' },
   ];
 
-  // Sample order data (show different logic for real tabs as needed)
+  // Sample orders (mock logic; adjust as needed)
   const orders = [
     {
       id: 'GSHWN16Q002N24',
@@ -34,6 +34,44 @@ const AllOrders = () => {
       image: require('../../../assets/clothing/tops/blue_corset_top.png'),
     },
   ];
+
+  const productsFlat = products.flatMap(store =>
+    store.products.map(product => ({
+      ...product,
+      storeName: store.storeName,
+    }))
+  );
+
+  // Helper for rendering order or empty block
+  const renderOrderContent = () => (
+    <ScrollView contentContainerStyle={styles.ordersContent}>
+      {orders.map(order => (
+        <View key={order.id} style={styles.orderCard}>
+          <Text style={styles.statusText}>{order.status}</Text>
+          <Text style={styles.orderIdText}>Order # {order.id}</Text>
+          <View style={styles.storeInfo}>
+            <StoreIcon width={20} height={20} style={styles.storeIcon} />
+            <Text style={styles.storeName}>{order.storeName}</Text>
+          </View>
+          <Image source={order.image} style={styles.productImage} />
+          <TouchableOpacity style={styles.reviewButton}>
+            <Text style={styles.reviewButtonText}>Review</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
+  );
+
+  const renderEmptyBlock = () => (
+    <View style={styles.ordersContent}>
+      <View style={styles.orderCard}>
+        <View style={styles.emptyContainer}>
+          <EmptyIcon style={styles.emptyIcon} />
+          <Text style={styles.emptyText}>It is empty here :-(</Text>
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -52,11 +90,11 @@ const AllOrders = () => {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBarBox}>
-            <CustomSearchBar placeholder="Search my orders" />
+          <CustomSearchBar placeholder="Search my orders" />
         </View>
       </View>
 
-      {/* Horizontally Scrollable Tabs */}
+      {/* Tabs */}
       <View style={styles.tabsWrapper}>
         <ScrollView
           horizontal
@@ -86,80 +124,76 @@ const AllOrders = () => {
         </ScrollView>
       </View>
 
-      {/* Orders List - visible for "All orders", "Review", etc. */}
-      {(activeTab === 'All orders' || activeTab === 'Review') && (
-        <ScrollView contentContainerStyle={styles.ordersContent}>
-          {orders.map((order) => (
-            <View key={order.id} style={styles.orderCard}>
-              <Text style={styles.statusText}>{order.status}</Text>
-              <Text style={styles.orderIdText}>Order # {order.id}</Text>
-              <View style={styles.storeInfo}>
-                <View style={styles.storeIcon} />
-                <Text style={styles.storeName}>{order.storeName}</Text>
-              </View>
-              <Image source={order.image} style={styles.productImage} />
-              <TouchableOpacity style={styles.reviewButton}>
-                <Text style={styles.reviewButtonText}>Review</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-      )}
+      {/* Content Per Tab */}
+      <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+        <View>
+          {activeTab === 'All orders' && (
+            <>
+              {orders.length > 0 ? renderOrderContent() : renderEmptyBlock()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
 
-      {/* Add new blocks for other tabs as needed, e.g.: */}
-      {activeTab === 'All orders' && (
-        <View style={styles.ordersContent}>
-        </View>
-      )}
+          {activeTab === 'Unpaid' && (
+            <>
+              {renderEmptyBlock()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
 
-      {activeTab === 'Unpaid' && (
-        <View style={styles.ordersContent}>
-          <View style={styles.orderCard}>
-            <View style={styles.emptyContainer}>
-              <EmptyIcon style={styles.emptyIcon} />
-              <Text style={styles.emptyText}>It is empty here :-(</Text>
-            </View>
-          </View>
-        </View>
-      )}
+          {activeTab === 'Processing' && (
+            <>
+              {renderEmptyBlock()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
 
-      {activeTab === 'Processing' && (
-        <View style={styles.ordersContent}>
-          <View style={styles.orderCard}>
-            <View style={styles.emptyContainer}>
-              <EmptyIcon style={styles.emptyIcon} />
-              <Text style={styles.emptyText}>It is empty here :-(</Text>
-            </View>
-          </View>
-        </View>
-      )}
+          {activeTab === 'Shipped' && (
+            <>
+              {renderEmptyBlock()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
 
-      {activeTab === 'Shipped' && (
-        <View style={styles.ordersContent}>
-          <View style={styles.orderCard}>
-            <View style={styles.emptyContainer}>
-              <EmptyIcon style={styles.emptyIcon} />
-              <Text style={styles.emptyText}>It is empty here :-(</Text>
-            </View>
-          </View>
-        </View>
-      )}
+          {activeTab === 'Review' && (
+            <>
+              {renderOrderContent()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
 
-      {activeTab === 'Review' && (
-        <View style={styles.ordersContent}>
+          {activeTab === 'Returns' && (
+            <>
+              {renderEmptyBlock()}
+              <ProductSuggestions
+                products={productsFlat}
+                title="You May Also Like"
+                style={{ marginTop: 16 }}
+              />
+            </>
+          )}
         </View>
-      )}
-
-      {activeTab === 'Returns' && (
-        <View style={styles.ordersContent}>
-          <View style={styles.orderCard}>
-            <View style={styles.emptyContainer}>
-              <EmptyIcon style={styles.emptyIcon} />
-              <Text style={styles.emptyText}>It is empty here :-(</Text>
-            </View>
-          </View>
-        </View>
-      )}
+      </ScrollView>
     </View>
   );
 };
@@ -194,12 +228,12 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     alignItems: 'center',
-    width: '90%',          
+    width: '90%',
     paddingTop: 16,
     paddingBottom: 8,
   },
   searchBarBox: {
-    width: '90%',          
+    width: '90%',
   },
   tabsWrapper: {
     borderBottomWidth: 1,
@@ -308,7 +342,7 @@ const styles = StyleSheet.create({
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 150, 
+    minHeight: 150,
   },
   emptyIcon: {
     marginBottom: 16,

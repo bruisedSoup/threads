@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BackIcon from '../profile/backicon';
 import { useRouter } from 'expo-router';
 import CartIcon from '../profile/wishlist/carticon';
+import useIconStore from '../stores/iconStore'; 
+
 
 const IMAGE_HEIGHTS = [250, 270, 290];
 
@@ -56,11 +58,16 @@ const shuffleArray = (array) => {
 
 const Likes = () => {
   const router = useRouter();
+  const { favorites } = useIconStore();
   const [data, setData] = useState([]);
 
   useEffect(() => {
     setData(assignImageHeights(shuffleArray(wishlistData)));
   }, []);
+
+  useEffect(() => {
+    setData(assignImageHeights(favorites));
+  }, [favorites]);
 
   // Only wrap the card in TouchableOpacity, no style changes!
   const renderItem = ({ item }) => (

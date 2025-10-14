@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'reac
 import { Ellipsis, Plus, Minus } from 'lucide-react-native';
 import CircledIcon from './CircledIcon';
 import useSelectionStore from '../stores/useSelectionStore';
-import useCartStore from '../stores/cartStore'; // <-- import cart store
+import useCartStore from '../stores/cartStore'; 
 import {React, useState} from 'react'
 
 const CartCard = ({

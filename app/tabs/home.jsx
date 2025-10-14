@@ -78,6 +78,55 @@ const home = () => {
       description: "Essential black t-shirt with premium heavyweight cotton construction. Offers excellent color retention and minimal shrinkage. Versatile basic that pairs well with any outfit."
     }]
   },
+  {
+    storeName: "Dazy Weekend",
+    products: [
+      {
+        id: 5,
+        image: require("../../assets/clothing/bottoms/grey_sweatpants.png"),
+        title: "Casual Minimalist Drawstring Sweatpants",
+        price: 428,
+        sizePrices: { S: 400, M: 428, L: 450, XL: 475 },
+        type: "Bottoms",
+        rating: 4.0,
+        reviews: "8",
+        description: "Cozy drawstring sweatpants for everyday comfort."
+      },
+      {
+        id: 6,
+        image: require("../../assets/clothing/tops/pink_strapless_top.png"),
+        title: "Strapless Floral Print",
+        price: 147.75,
+        sizePrices: { S: 140, M: 147.75, L: 155, XL: 160 },
+        type: "Top",
+        rating: 5.0,
+        reviews: "14",
+        description: "A delicate, strapless floral print top for warm days."
+      },
+      {
+        id: 7,
+        image: require("../../assets/clothing/tops/pink_animal_shirt.png"),
+        title: "Round neck animal print",
+        price: 250,
+        sizePrices: { S: 230, M: 250, L: 265, XL: 280 },
+        type: "Top",
+        rating: 4.2,
+        reviews: "5",
+        description: "Trendy round neck shirt with bold animal print."
+      },
+      {
+        id: 8,
+        image: require("../../assets/clothing/tops/blue_corset_top.png"),
+        title: "Blue Corset Top",
+        price: 180,
+        sizePrices: { S: 170, M: 180, L: 190, XL: 200 },
+        type: "Top",
+        rating: 4.8,
+        reviews: "11",
+        description: "Fitted blue corset-styled top for a chic statement."
+      },
+    ]
+  }
 ];
 
   return (
