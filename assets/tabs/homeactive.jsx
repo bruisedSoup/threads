@@ -1,0 +1,18 @@
+import * as React from "react";
+import Svg, { Rect, Path, Circle } from "react-native-svg";
+const HomeActive = (props) => (
+  <Svg
+    viewBox="0 0 40 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <Rect width={40} height={40} rx={20} fill="white" fillOpacity={0.05} />
+    <Path
+      d="M28.04 14.82L22.28 10.79C20.71 9.69 18.3 9.75 16.79 10.92L11.78 14.83C10.78 15.61 9.98999 17.21 9.98999 18.47V25.37C9.98999 27.92 12.06 30 14.61 30H25.39C27.94 30 30.01 27.93 30.01 25.38V18.6C30.01 17.25 29.14 15.59 28.04 14.82ZM20.75 26C20.75 26.41 20.41 26.75 20 26.75C19.59 26.75 19.25 26.41 19.25 26V23C19.25 22.59 19.59 22.25 20 22.25C20.41 22.25 20.75 22.59 20.75 23V26Z"
+      fill="#FDFDFD"
+    />
+    <Circle cx={20} cy={36} r={2} fill="white" />
+  </Svg>
+);
+export default HomeActive;
