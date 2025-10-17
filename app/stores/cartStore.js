@@ -43,7 +43,12 @@ const useCartStore = create((set) => ({
       return { cart: updatedCart };
     }),
 
-    clearCart: () => set({ cart: [] }),
+  removeStore: (storeName) =>
+    set((state) => ({
+      cart: state.cart.filter(store => store.storeName !== storeName)
+    })),
+
+  clearCart: () => set({ cart: [] }),
 }));
 
 export default useCartStore;

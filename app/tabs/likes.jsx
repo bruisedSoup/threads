@@ -15,9 +15,6 @@ const Likes = () => {
     <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backIcon} onPress={() => router.push('/tabs/profile')}>
-          <BackIcon />
-        </TouchableOpacity>
         <Text style={styles.headerText}>Wishlist</Text>
         <TouchableOpacity style={styles.cartIcon} onPress={() => router.push('/tabs/cart')}>
           <CartIcon />
@@ -68,11 +65,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  backIcon: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 1,
   },
   cartIcon: {
     position: 'absolute',

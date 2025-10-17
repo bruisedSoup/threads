@@ -32,13 +32,13 @@ export const products = [
     products: [{
       id: 3,
       image: require("../../assets/clothing/tops/maroon.png"),
-      title: "White T-Shirt",
+      title: "Black T-Shirt",
       price: "19.99",
       sizePrices: { S: 18, M: 19.99, L: 21, XL: 22 },
       type: "T-Shirt",
       rating: "4.7",
       reviews: "10",
-      description: "Classic crewneck white t-shirt made from 100% organic cotton. Features a comfortable regular fit and reinforced neckline for durability. The perfect wardrobe staple for everyday wear."
+      description: "Classic crewneck black t-shirt made from 100% organic cotton. Features a comfortable regular fit and reinforced neckline for durability. The perfect wardrobe staple for everyday wear."
     }]
   },
   {

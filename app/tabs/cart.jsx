@@ -8,17 +8,19 @@ import CartCard from '../components/CartCard'
 import useCartStore from '../stores/cartStore'
 import useSelectionStore from '../stores/useSelectionStore'
 import CustomButton from '../components/CustomButton';
+import CheckIcon from '../components/checkicon'; 
 
 const Cart = () => {
   const router = useRouter();
-  const { cart, clearCart } = useCartStore(); // ✅ added clearCart to empty the cart
+  const { cart, clearCart, removeStore } = useCartStore();
   const { 
     selectedStores, 
     selectedProducts,
     selectAllStores, 
     deselectAllStores,
     selectAllProducts,
-    deselectAllProducts
+    deselectAllProducts,
+    deselectStore
   } = useSelectionStore();
 
   const allStoreNames = cart.map(store => store.storeName);
@@ -38,9 +40,29 @@ const Cart = () => {
   };
 
   const handleRemoveAll = () => {
-    clearCart(); // ✅ empties all products
+    clearCart();
     deselectAllStores();
     deselectAllProducts();
+  };
+
+  const handleRemoveStore = (storeName) => {
+    // Get products from this store before removing
+    const store = cart.find(s => s.storeName === storeName);
+    const storeProductIds = store?.products.map(p => p.id) || [];
+    
+    // Remove store from cart
+    removeStore(storeName);
+    
+    // Deselect the store
+    deselectStore(storeName);
+    
+    // Deselect all products from this store
+    storeProductIds.forEach(productId => {
+      if (selectedProducts.includes(productId)) {
+        const updatedProducts = selectedProducts.filter(id => id !== productId);
+        // This will be handled by the store automatically
+      }
+    });
   };
 
   const totalPrice = cart.reduce((sum, store) => {
@@ -63,16 +85,18 @@ const Cart = () => {
         <View style={styles.allBackButtonContainer}>
           <View style={styles.allButtonContainer}>
             <TouchableOpacity 
-              style={[
-                styles.allButton,
-                { backgroundColor: allStoresSelected ? '#000000ff' : '#ffffffff' }
-              ]}
+              style={styles.allButtonWrapper}
               onPress={toggleSelectAllStores}
-            />
-            <Text>All</Text>
+            >
+              {allStoresSelected ? (
+                <CheckIcon width={30} height={30} />
+              ) : (
+                <View style={styles.uncheckedCircle} />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.allText}>All</Text>
           </View>
 
-          {/* ✅ Replace back button with conditional Remove All */}
           {allStoresSelected && cart.length > 0 && (
             <TouchableOpacity 
               style={styles.removeAllButton} 
@@ -86,7 +110,11 @@ const Cart = () => {
 
       <ScrollView style={styles.scrollView}>
         {cart.map((store) => (
-          <StoreCard key={store.storeName} storeName={store.storeName}>
+          <StoreCard 
+            key={store.storeName} 
+            storeName={store.storeName}
+            onRemove={() => handleRemoveStore(store.storeName)}
+          >
             {store.products.map((product) => (
               <CartCard
                 key={product.id}
@@ -161,14 +189,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  allButton: {
-    backgroundColor: '#ffffffff',
+  allButtonWrapper: {
+    marginRight: 10,
+  },
+  uncheckedCircle: {
     width: 30,
     height: 30,
-    borderRadius: 50,
-    marginRight: 10,
+    borderRadius: 15,
     borderWidth: 1,
-    borderColor: '#c9c9c9ff',
+    borderColor: '#292526',
+    backgroundColor: 'transparent',
+  },
+  allText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   removeAllButton: {
     backgroundColor: '#000',

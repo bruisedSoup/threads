@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native'
 import { Ellipsis, Plus, Minus } from 'lucide-react-native';
 import CircledIcon from './CircledIcon';
+import CheckIcon from './checkicon';
 import useSelectionStore from '../stores/useSelectionStore';
 import useCartStore from '../stores/cartStore'; 
 import {React, useState} from 'react'
@@ -27,15 +28,15 @@ const CartCard = ({
   return (
     <View style={styles.cartContainer}>
         <TouchableOpacity
-            style={[
-                styles.selectButton,
-                { 
-                  backgroundColor: isSelected ? '#000000ff' : '#ffffffff',
-                  borderColor: isSelected ? '#000000ff' : '#ccc'
-                }
-            ]}
+            style={styles.selectButtonWrapper}
             onPress={() => selectProduct(id)}
-        />
+        >
+          {isSelected ? (
+            <CheckIcon width={24} height={24} />
+          ) : (
+            <View style={styles.uncheckedCircle} />
+          )}
+        </TouchableOpacity>
         
         <View style={styles.imageContainer}>
             <Image source={image} style={styles.image} />
@@ -93,12 +94,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  selectButton: {
+  selectButtonWrapper: {
+    marginRight: 7,
+  },
+  uncheckedCircle: {
     width: 24,
     height: 24,
-    borderRadius: 50,
-    borderWidth: 2,
-    marginRight: 7,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#292526',
+    backgroundColor: 'transparent',
   },
   imageContainer: {
     width: 80,

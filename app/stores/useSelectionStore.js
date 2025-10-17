@@ -34,6 +34,11 @@ const useSelectionStore = create((set) => ({
     set(() => ({
       selectedStores: [],
     })),
+
+  deselectStore: (storeName) =>
+    set((state) => ({
+      selectedStores: state.selectedStores.filter((s) => s !== storeName),
+    })),
     
   selectProduct: (productId) =>
     set((state) => ({
