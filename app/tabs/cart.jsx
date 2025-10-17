@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ChevronLeft, ShoppingCart } from 'lucide-react-native'
+import { ShoppingCart } from 'lucide-react-native'
 import { useRouter } from 'expo-router';
 import React from 'react'
 import StoreCard from '../components/StoreCard'
@@ -9,11 +9,9 @@ import useCartStore from '../stores/cartStore'
 import useSelectionStore from '../stores/useSelectionStore'
 import CustomButton from '../components/CustomButton';
 
-// ...existing code...
-
 const Cart = () => {
   const router = useRouter();
-  const { cart } = useCartStore();
+  const { cart, clearCart } = useCartStore(); // ✅ added clearCart to empty the cart
   const { 
     selectedStores, 
     selectedProducts,
@@ -23,19 +21,12 @@ const Cart = () => {
     deselectAllProducts
   } = useSelectionStore();
 
-  // Get all store names from cart
   const allStoreNames = cart.map(store => store.storeName);
+  const allProductIds = cart.flatMap(store => store.products.map(product => product.id));
   
-  // Get all product IDs from cart
-  const allProductIds = cart.flatMap(store => 
-    store.products.map(product => product.id)
-  );
-  
-  // Check if all stores are selected
   const allStoresSelected = allStoreNames.length > 0 && 
     allStoreNames.every(store => selectedStores.includes(store));
 
-  // Toggle select all stores and products
   const toggleSelectAllStores = () => {
     if (allStoresSelected) {
       deselectAllStores();
@@ -46,7 +37,12 @@ const Cart = () => {
     }
   };
 
-  // calculate total price
+  const handleRemoveAll = () => {
+    clearCart(); // ✅ empties all products
+    deselectAllStores();
+    deselectAllProducts();
+  };
+
   const totalPrice = cart.reduce((sum, store) => {
     return sum + store.products.reduce((s, p) => {
       if (selectedProducts.includes(p.id)) {
@@ -76,18 +72,21 @@ const Cart = () => {
             <Text>All</Text>
           </View>
 
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ChevronLeft size={28} color="#000000ff" strokeWidth={1} />
-          </TouchableOpacity>
+          {/* ✅ Replace back button with conditional Remove All */}
+          {allStoresSelected && cart.length > 0 && (
+            <TouchableOpacity 
+              style={styles.removeAllButton} 
+              onPress={handleRemoveAll}
+            >
+              <Text style={styles.removeAllText}>Remove All</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
       <ScrollView style={styles.scrollView}>
         {cart.map((store) => (
-          <StoreCard 
-            key={store.storeName} 
-            storeName={store.storeName}
-          >
+          <StoreCard key={store.storeName} storeName={store.storeName}>
             {store.products.map((product) => (
               <CartCard
                 key={product.id}
@@ -101,7 +100,7 @@ const Cart = () => {
             ))}
           </StoreCard>
         ))}
-        
+
         {cart.length === 0 && (
           <View style={styles.emptyCart}>
             <Text style={styles.emptyCartText}>Your cart is empty</Text>
@@ -125,7 +124,6 @@ const Cart = () => {
   )
 }
 
-// ...existing code...
 const styles = StyleSheet.create({
   parentContainer: {
     flex: 1,
@@ -144,7 +142,8 @@ const styles = StyleSheet.create({
   cartText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginTop: 10,
+    marginBottom: 10,
   },
   shippingText: {
     fontSize: 15,
@@ -171,16 +170,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#c9c9c9ff',
   },
-  backButton: {
-    backgroundColor: '#ffffffff',
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#c9c9c9ff',
-    justifyContent: 'center',
-    alignItems: 'center',
+  removeAllButton: {
+    backgroundColor: '#000',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  removeAllText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
   },
   scrollView: {
     flex: 1,

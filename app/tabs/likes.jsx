@@ -1,104 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import MasonryList from '@react-native-seoul/masonry-list';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import BackIcon from '../profile/backicon';
 import { useRouter } from 'expo-router';
 import CartIcon from '../profile/wishlist/carticon';
-import useIconStore from '../stores/iconStore'; 
-
-
-const IMAGE_HEIGHTS = [250, 270, 290];
-
-const wishlistData = [
-  {
-    id: '1',
-    title: 'Casual Minimalist Drawstring Sweatpants',
-    price: 428,
-    rating: 4.0,
-    image: require('../../assets/clothing/bottoms/grey_sweatpants.png'),
-  },
-  {
-    id: '2',
-    title: 'Strapless Floral Print',
-    price: 147.75,
-    rating: 5.0,
-    image: require('../../assets/clothing/tops/pink_strapless_top.png'),
-  },
-  {
-    id: '3',
-    title: 'Round neck animal print',
-    price: 250,
-    rating: 4.2,
-    image: require('../../assets/clothing/tops/pink_animal_shirt.png'),
-  },
-  {
-    id: '4',
-    title: 'Blue Corset Top',
-    price: 180,
-    rating: 4.8,
-    image: require('../../assets/clothing/tops/blue_corset_top.png'),
-  },
-];
-
-// Randomly assign image heights for masonry effect
-const assignImageHeights = (array) => {
-  return array.map(item => ({
-    ...item,
-    imageHeight: IMAGE_HEIGHTS[Math.floor(Math.random() * IMAGE_HEIGHTS.length)],
-  }));
-};
-
-const shuffleArray = (array) => {
-  return array
-    .map((item) => ({ item, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ item }) => item);
-};
+import useIconStore from '../stores/iconStore';
+import MasonryList from '@react-native-seoul/masonry-list';
+import ProductCard from '../components/ProductCard';
 
 const Likes = () => {
   const router = useRouter();
   const { favorites } = useIconStore();
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    setData(assignImageHeights(shuffleArray(wishlistData)));
-  }, []);
-
-  useEffect(() => {
-    setData(assignImageHeights(favorites));
-  }, [favorites]);
-
-  // Only wrap the card in TouchableOpacity, no style changes!
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      activeOpacity={0.105}
-    >
-      <View style={styles.card}>
-        <Image
-          source={item.image}
-          style={[styles.itemImage, { height: item.imageHeight }]}
-          resizeMode="cover"
-        />
-        <View style={styles.cardContent}>
-          <Text style={styles.itemTitle}>{item.title}</Text>
-          <Text style={styles.itemPrice}>{`Php${item.price}`}</Text>
-          {item.rating && (
-            <View style={styles.ratingContainer}>
-              <Text style={styles.star}>⭐</Text>
-              <Text style={styles.itemRating}>{item.rating}</Text>
-            </View>
-          )}
-        </View>
-        <TouchableOpacity style={styles.heartButton}>
-          <Icon name="heart" size={18} color="#fff" />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backIcon} onPress={() => router.push('/tabs/profile')}>
           <BackIcon />
@@ -108,19 +23,33 @@ const Likes = () => {
           <CartIcon />
         </TouchableOpacity>
       </View>
+
+      {/* Horizontal line below header */}
+      <View style={styles.headerDivider} />
+
+      {/* Items count and line */}
       <View style={styles.numlikesContainer}>
         <Text style={styles.likedCount}>
-          Items({data.length})
+          Items({favorites.length})
         </Text>
         <View style={styles.divider} />
       </View>
+
+      {/* Products grid */}
       <MasonryList
-        data={data}
-        keyExtractor={item => item.id}
+        data={favorites}
+        keyExtractor={item => item.id.toString()}
         numColumns={2}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 8 }}
+        contentContainerStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.productContainer}>
+            <ProductCard
+              key={item.id}
+              {...item}
+            />
+          </View>
+        )}
       />
     </View>
   );
@@ -150,11 +79,17 @@ const styles = StyleSheet.create({
     right: 12,
     zIndex: 1,
   },
+  // 🔹 Added gray line below header (like the Following screen)
+  headerDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    width: '100%',
+  },
   numlikesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
-    marginTop: 0,
+    marginTop: 10,
     backgroundColor: '#fff',
     left: -145,
   },
@@ -175,65 +110,14 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 6,
   },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    margin: 6,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    overflow: 'hidden',
-    width: '85%',
-    alignSelf: 'center',
+  productContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    marginBottom: 20,
   },
-  itemImage: {
-    width: '100%',
-    borderRadius: 12,
-  },
-  cardContent: {
-    padding: 12,
-    paddingBottom: 16,
-  },
-  itemTitle: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 4,
-    lineHeight: 18,
-  },
-  itemPrice: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  star: {
-    fontSize: 12,
-    marginRight: 4,
-  },
-  itemRating: {
-    fontSize: 12,
-    color: '#666',
-  },
-  heartButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#292526',
-    borderRadius: 20,
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heartIcon: {
-    fontSize: 16,
-    color: '#fff',
+  columnWrapper: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
   },
 });
 

@@ -12,6 +12,7 @@ const shuffleArray = (array) =>
 const ProductSuggestions = ({
   products = [],
   title = "You May Also Like",
+  showTitle = true,
   numColumns = 2,
   style = {},
 }) => {
@@ -23,12 +24,11 @@ const ProductSuggestions = ({
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.title}>{title}</Text>
+      {showTitle && <Text style={styles.title}>{title}</Text>}
       <MasonryList
         data={shuffled}
         keyExtractor={item => item.id.toString()}
         numColumns={numColumns}
-        // MATCH HOME'S MasonryList paddings and productContainer style:
         contentContainerStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
@@ -46,7 +46,7 @@ const ProductSuggestions = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 62,
+    marginVertical: 65,
   },
   title: {
     fontWeight: 'bold',

@@ -1,219 +1,118 @@
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import MasonryList from '@react-native-seoul/masonry-list'
-import React from 'react'
-
-import { LayoutGrid } from 'lucide-react-native'
-import Icon from '../components/CustomIcon'
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { LayoutGrid } from 'lucide-react-native';
 
 import WelcomeHeader from '../components/WelcomeHeader';
 import SearchBar from '../components/SearchBar';
-import FilterIcon from '../components/FilterIcon';
-import ProductCard from '../components/ProductCard';
 import CustomButton from '../components/CustomButton';
-
 import DressIcon from '../components/dressicon';
 import Shirt from '../components/shirticon';
+import Bottoms from '../components/bottomicon';
+import Tops from '../components/topsicon';
+import ProductSuggestions from '../components/ProductSuggestions';
+import { products } from '../data/product';
 
-const home = () => {
+const Home = () => {
+  const [selectedFilter, setSelectedFilter] = useState("All Items");
+
+  // Define filter icons and matching product types
   const filterIcons = [
-    { name: "Dress", icon: DressIcon }, 
-    { name: "T-Shirt", icon: Shirt }, 
+    { name: "Dress", icon: DressIcon, type: "Dress Modern" },
+    { name: "T-Shirt", icon: Shirt, type: "T-Shirt" },
+    { name: "Bottoms", icon: Bottoms, type: "Bottoms" },
+    { name: "Tops", icon: Tops, type: "Top" }
   ];
 
-  const products = [
-  {
-    storeName: "NIKE FLAGSHIP STORE",
-    products: [{
-      id: 1,
-      image: require("../../assets/clothing/tops/Product1.png"),
-      title: "Modern Light Clothes",
-      price: "2129.99",
-      sizePrices: { S: 2000, M: 2129.99, L: 2200, XL: 2300 },
-      type: "T-Shirt",
-      rating: "4.5",
-      reviews: "12",
-      description: "Premium quality modern t-shirt made from breathable cotton blend. Features a contemporary slim fit design with subtle texture details. Perfect for casual outings or layering under jackets."
-    }]
-  },
-  {
-    storeName: "ADIDAS ORIGINALS",
-    products: [{
-      id: 2,
-      image: require("../../assets/clothing/dresses/brown.png"),
-      title: "Blue Dress",
-      price: "2699.99",
-      sizePrices: { S: 2500, M: 2699.99, L: 2800, XL: 2900 },
-      type: "Dress Modern",
-      rating: "4.8",
-      reviews: "15",
-      description: "Elegant blue midi dress with flowing silhouette and delicate floral patterns. Made from sustainable viscose fabric that drapes beautifully. Ideal for summer parties, brunches, or special occasions."
-    }]
-  },
-  {
-    storeName: "PUMA",
-    products: [{
-      id: 3,
-      image: require("../../assets/clothing/tops/maroon.png"),
-      title: "White T-Shirt",
-      price: "19.99",
-      sizePrices: { S: 18, M: 19.99, L: 21, XL: 22 },
-      type: "T-Shirt",
-      rating: "4.7",
-      reviews: "10",
-      description: "Classic crewneck white t-shirt made from 100% organic cotton. Features a comfortable regular fit and reinforced neckline for durability. The perfect wardrobe staple for everyday wear."
-    }]
-  },
-  {
-    storeName: "PUMA",
-    products: [{
-      id: 4,
-      image: require("../../assets/clothing/dresses/yellow.png"),
-      title: "Black T-Shirt",
-      price: "24.99",
-      sizePrices: { S: 22, M: 24.99, L: 26, XL: 27 },
-      type: "T-Shirt",
-      rating: "4.6",
-      reviews: "8",
-      description: "Essential black t-shirt with premium heavyweight cotton construction. Offers excellent color retention and minimal shrinkage. Versatile basic that pairs well with any outfit."
-    }]
-  },
-  {
-    storeName: "Dazy Weekend",
-    products: [
-      {
-        id: 5,
-        image: require("../../assets/clothing/bottoms/grey_sweatpants.png"),
-        title: "Casual Minimalist Drawstring Sweatpants",
-        price: 428,
-        sizePrices: { S: 400, M: 428, L: 450, XL: 475 },
-        type: "Bottoms",
-        rating: 4.0,
-        reviews: "8",
-        description: "Cozy drawstring sweatpants for everyday comfort."
-      },
-      {
-        id: 6,
-        image: require("../../assets/clothing/tops/pink_strapless_top.png"),
-        title: "Strapless Floral Print",
-        price: 147.75,
-        sizePrices: { S: 140, M: 147.75, L: 155, XL: 160 },
-        type: "Top",
-        rating: 5.0,
-        reviews: "14",
-        description: "A delicate, strapless floral print top for warm days."
-      },
-      {
-        id: 7,
-        image: require("../../assets/clothing/tops/pink_animal_shirt.png"),
-        title: "Round neck animal print",
-        price: 250,
-        sizePrices: { S: 230, M: 250, L: 265, XL: 280 },
-        type: "Top",
-        rating: 4.2,
-        reviews: "5",
-        description: "Trendy round neck shirt with bold animal print."
-      },
-      {
-        id: 8,
-        image: require("../../assets/clothing/tops/blue_corset_top.png"),
-        title: "Blue Corset Top",
-        price: 180,
-        sizePrices: { S: 170, M: 180, L: 190, XL: 200 },
-        type: "Top",
-        rating: 4.8,
-        reviews: "11",
-        description: "Fitted blue corset-styled top for a chic statement."
-      },
-    ]
-  }
-];
+  // Flatten nested structure
+  const productsFlat = products?.flatMap(store =>
+    store.products.map(product => ({
+      ...product,
+      storeName: store.storeName,
+    }))
+  ) || [];
+
+  // Filter by type
+  const filteredProducts =
+    selectedFilter === "All Items"
+      ? productsFlat
+      : productsFlat.filter(product => product.type === selectedFilter);
 
   return (
-    <SafeAreaView style={styles.container}> 
-      <View>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={{ zIndex: 10, backgroundColor: '#fff' }}>
         <WelcomeHeader name="User One" />
         <View style={styles.searchBarContainer}>
           <SearchBar placeholder="Search clothes..." />
         </View>
       </View>
-      <View style={styles.filterTabContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginBottom: 30}}>
+
+      {/* Filter Tabs */}
+      <View style={[styles.filterTabContainer, { zIndex: 10, backgroundColor: '#fff' }]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 30 }}>
+          {/* All Items Button */}
           <CustomButton
             name="All Items"
             icon={LayoutGrid}
             size={30}
-            iconColor="#ffffffff"
+            iconColor={selectedFilter === "All Items" ? "#fff" : "#000"}
+            onPress={() => setSelectedFilter("All Items")}
             containerStyle={{
-              backgroundColor: "#000000ff",
+              backgroundColor: selectedFilter === "All Items" ? "#000" : "#fff",
               borderRadius: 10,
               marginRight: 10,
-              paddingHorizontal: 15,
-              paddingVertical: 7,
+              paddingHorizontal: 13,
+              paddingVertical: 3,
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
               borderWidth: 1,
             }}
-            textStyle={{ color: "#ffffffff", fontSize: 17 }}
+            textStyle={{ color: selectedFilter === "All Items" ? "#fff" : "#000", fontSize: 17 }}
           />
+
+          {/* Dynamic Filter Buttons */}
           {filterIcons.map((item, index) => (
             <CustomButton
               key={index}
               name={item.name}
               icon={item.icon}
               size={30}
-              iconColor="#000000ff"
+              iconColor={selectedFilter === item.type ? "#fff" : "#000"}
+              onPress={() => setSelectedFilter(item.type)}
               containerStyle={{
-                backgroundColor: "#ffffffff",
+                backgroundColor: selectedFilter === item.type ? "#000" : "#fff",
                 borderRadius: 10,
                 marginRight: 10,
-                paddingHorizontal: 15,
-                paddingVertical: 7,
+                paddingHorizontal: 13,
+                paddingVertical: 3,
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 5,
                 borderWidth: 1,
               }}
-              textStyle={{ color: "#000000ff", fontSize: 17 }}
+              textStyle={{ color: selectedFilter === item.type ? "#fff" : "#000", fontSize: 17 }}
             />
           ))}
         </ScrollView>
-      </View> 
+      </View>
 
-      <MasonryList
-        data={products.flatMap(store =>
-          store.products.map(product => ({
-            ...product,
-            storeName: store.storeName
-          }))
-        )}
-        numColumns={2}
-        contentContainerStyle={styles.columnWrapper}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.productContainer}>
-            <ProductCard
-              key={item.id}
-              id={item.id}
-              image={item.image}
-              title={item.title}
-              price={item.price}
-              sizePrices={item.sizePrices}
-              type={item.type}
-              rating={item.rating}
-              reviews={item.reviews}
-              description={item.description}
-              storeName={item.storeName}
-            />
-          </View>
-        )}
-      />
+      {/* Product Section */}
+      <View style={styles.productSuggestionsContainer}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <ProductSuggestions
+            products={filteredProducts}
+            numColumns={2}
+            showTitle={false}
+          />
+        </ScrollView>
+      </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default home
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
@@ -229,15 +128,11 @@ const styles = StyleSheet.create({
   },
   filterTabContainer: {
     paddingHorizontal: 25,
-    marginTop: 30,
+    marginTop: -10,
   },
-  productContainer: {
+  productSuggestionsContainer: {
     flex: 1,
-    marginHorizontal: 10,
-    marginBottom: 20,
+    paddingHorizontal: 1,
+    marginTop: -65,
   },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-  },
-})
+});

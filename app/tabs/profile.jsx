@@ -11,10 +11,16 @@ import WishlistIcon from '../../app/profile/wishlisticon/wishlisticon.jsx';
 import FollowingsIcon from '../../app/profile/wishlisticon/followingsicon.jsx';
 import ProductSuggestions from '../components/ProductSuggestions';
 import { products } from '../data/product';
+import useIconStore from '../stores/iconStore';
+
 
 const Profile = () => {
   const router = useRouter();
+
+  const { favorites } = useIconStore();
+
   const handleSettingsPress = () => { router.push('/profile/settings'); };
+
   const handleAvatarPress = () => {
     router.push({
       pathname: '/profile/userprofile',
@@ -131,7 +137,9 @@ const Profile = () => {
               <Text style={styles.columnTitle}>Wishlist</Text>
               <TouchableOpacity style={styles.columnItem} onPress={() => handleTabPress('/tabs/likes')} activeOpacity={0.7}>
                 <WishlistIcon width={24} height={24} />
-                <Text style={styles.columnText}>4 wishlist</Text>
+                <Text style={styles.columnText}>
+                  {favorites.length} wishlist
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.columnContainer}>
@@ -147,7 +155,9 @@ const Profile = () => {
         <ProductSuggestions
           products={productsFlat}
           title="You May Also Like"
+          showTitle={false}
           numColumns={2}
+          style={{ marginTop: 15 }}
         />
       </ScrollView>
     </View>

@@ -46,18 +46,17 @@ export const products = [
     products: [{
       id: 4,
       image: require("../../assets/clothing/dresses/yellow.png"),
-      title: "Black T-Shirt",
+      title: "Yellow Dress",
       price: "24.99",
       sizePrices: { S: 22, M: 24.99, L: 26, XL: 27 },
-      type: "T-Shirt",
+      type: "Dress Modern",
       rating: "4.6",
       reviews: "8",
-      description: "Essential black t-shirt with premium heavyweight cotton construction. Offers excellent color retention and minimal shrinkage. Versatile basic that pairs well with any outfit."
+      description: "Essential yellow dress with premium heavyweight cotton construction. Offers excellent color retention and minimal shrinkage. Versatile basic that pairs well with any outfit."
     }]
   },
-  // Sample "You May Also Like" / wishlist items as 5-8
   {
-    storeName: "WISHLIST SAMPLES",
+    storeName: "Dazy Weekend",
     products: [
       {
         id: 5,
@@ -120,7 +119,7 @@ export const products = [
         title: "Solid Contrast Lace A-Line Skirt",
         price: 180,
         sizePrices: { S: 170, M: 180, L: 190, XL: 200 },
-        type: "Top",
+        type: "Bottoms",
         rating: 4.8,
         reviews: "11",
         description: "Elegant A-line skirt with delicate lace detailing and soft contrast lining. Adds a touch of sophistication to any outfit."
