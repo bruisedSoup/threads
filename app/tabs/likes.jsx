@@ -1,44 +1,40 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import BackIcon from '../profile/backicon';
-import { useRouter } from 'expo-router';
-import CartIcon from '../profile/wishlist/carticon';
-import useIconStore from '../stores/iconStore';
-import MasonryList from '@react-native-seoul/masonry-list';
-import ProductCard from '../components/ProductCard';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ArrowLeft, ShoppingCart, Store } from 'lucide-react-native'
+import { useRouter } from 'expo-router'
+import MasonryList from '@react-native-seoul/masonry-list'
+import {React, useState} from 'react'
+import ProductCard from '../components/ProductCard'
+import useIconStore from '../stores/iconStore'
+import CartIcon from '../profile/wishlist/carticon'
 
-const Likes = () => {
-  const router = useRouter();
-  const { favorites } = useIconStore();
+const Favorites = () => {
+  const router = useRouter()
+  const { favorites } = useIconStore()
+  const [textWidth, setTextWidth] = useState(0)
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backIcon} onPress={() => router.push('/tabs/profile')}>
-          <BackIcon />
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <ArrowLeft size={24} color="#000" strokeWidth={1} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Wishlist</Text>
-        <TouchableOpacity style={styles.cartIcon} onPress={() => router.push('/tabs/cart')}>
-          <CartIcon />
+        <Text style={styles.headerTitle}>Wishlist</Text>
+        <TouchableOpacity style={styles.cartButton} onPress={() => router.push('../tabs/cart')}>
+          <CartIcon width={24} height={24} />
         </TouchableOpacity>
       </View>
 
-      {/* Horizontal line below header */}
-      <View style={styles.headerDivider} />
-
-      {/* Items count and line */}
-      <View style={styles.numlikesContainer}>
-        <Text style={styles.likedCount}>
-          Items({favorites.length})
-        </Text>
-        <View style={styles.divider} />
+      {/* Items Count */}
+      <View style={styles.itemsCountContainer}>
+        <Text style={styles.itemsCountText} onLayout={(e) => setTextWidth(e.nativeEvent.layout.width)}>Items({favorites.length})</Text>
+        <View style={[styles.line, {width: textWidth}]}></View>
       </View>
 
-      {/* Products grid */}
+      {/* Products Grid */}
       <MasonryList
         data={favorites}
-        keyExtractor={item => item.id.toString()}
         numColumns={2}
         contentContainerStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
@@ -46,68 +42,66 @@ const Likes = () => {
           <View style={styles.productContainer}>
             <ProductCard
               key={item.id}
-              {...item}
+              id={item.id}
+              image={item.image}
+              title={item.title}
+              price={item.price}
+              sizePrices={item.sizePrices}
+              type={item.type}
+              rating={item.rating}
+              reviews={item.reviews}
+              description={item.description}
+              storeName="Wishlist Store"
             />
           </View>
         )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Your wishlist is empty</Text>
+            <Text style={styles.emptySubText}>Add items you love to see them here</Text>
+          </View>
+        }
       />
-    </View>
-  );
-};
+    </SafeAreaView>
+  )
+}
 
 const styles = StyleSheet.create({
-  header: {
-    position: 'relative',
-    flexDirection: 'row',
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  container: {
+    flex: 1,
     backgroundColor: '#fff',
-    marginTop: 35,
+    paddingBottom: 60,
   },
-  headerText: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  backButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000',
   },
-  backIcon: {
-    position: 'absolute',
-    left: 12,
-    zIndex: 1,
-  },
-  cartIcon: {
-    position: 'absolute',
-    right: 12,
-    zIndex: 1,
-  },
-  // 🔹 Added gray line below header (like the Following screen)
-  headerDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    width: '100%',
-  },
-  numlikesContainer: {
-    alignItems: 'center',
+  cartButton: {
     justifyContent: 'center',
-    marginBottom: 6,
-    marginTop: 10,
-    backgroundColor: '#fff',
-    left: -145,
+    alignItems: 'center',
   },
-  likedCount: {
-    fontSize: 15,
-    color: 'black',
+  itemsCountContainer: {
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  itemsCountText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    paddingVertical: 4,
-    paddingHorizontal: 14,
-    backgroundColor: '#fff',
-    borderRadius: 14,
-  },
-  divider: {
-    width: '17%',
-    height: 5,
-    backgroundColor: 'black',
-    alignSelf: 'center',
-    marginTop: 2,
+    color: '#000',
+    marginHorizontal: 10,
     marginBottom: 6,
   },
   productContainer: {
@@ -119,6 +113,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
-});
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 8,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
 
-export default Likes;
+  line: {
+    height: 3,
+    backgroundColor: 'black',
+    marginHorizontal: 10,
+  }
+})
+
+export default Favorites

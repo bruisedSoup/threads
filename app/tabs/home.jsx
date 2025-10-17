@@ -119,16 +119,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     paddingBottom: 60,
-    marginTop: -30,
+    marginTop: 5,
   },
   searchBarContainer: {
     alignItems: 'center',
     paddingHorizontal: 10,
     marginTop: -10,
+    marginBottom: 10,
   },
   filterTabContainer: {
     paddingHorizontal: 25,
-    marginTop: -10,
   },
   productSuggestionsContainer: {
     flex: 1,

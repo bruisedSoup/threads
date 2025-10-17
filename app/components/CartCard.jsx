@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native'
-import { Ellipsis, Plus, Minus } from 'lucide-react-native';
-import CircledIcon from './CircledIcon';
+import { Ellipsis, Minus, Plus, Check } from 'lucide-react-native';
+import { useState } from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import useSelectionStore from '../stores/useSelectionStore';
-import useCartStore from '../stores/cartStore'; 
-import {React, useState} from 'react'
+import useCartStore from '../stores/cartStore';
+import CircledIcon from './CircledIcon';
 
 const CartCard = ({
   id,
@@ -16,7 +16,8 @@ const CartCard = ({
   const [quantity, setQuantity] = useState(initialQuantity || 1);
   const { selectedProducts, selectProduct } = useSelectionStore();
   const isSelected = selectedProducts.includes(id);
-  const { updateQuantity } = useCartStore();
+  const { updateQuantity, removeFromCart } = useCartStore();
+  const [isEditing, setIsEditing] = useState(false);
 
   // Update quantity in cart store when changed
   const handleQuantityChange = (newQuantity) => {
@@ -35,7 +36,9 @@ const CartCard = ({
                 }
             ]}
             onPress={() => selectProduct(id)}
-        />
+        >
+            {isSelected && <Check size={20} color="#fff" strokeWidth={2} />}
+        </TouchableOpacity>
         
         <View style={styles.imageContainer}>
             <Image source={image} style={styles.image} />
@@ -44,7 +47,16 @@ const CartCard = ({
         <View style={styles.productInfoContainer}>
             <View style={styles.productTitleContainer}>
                 <Text style={styles.productTitle}>{title}</Text>
-                <Ellipsis size={20} color="#000000ff" strokeWidth={1} />
+                <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
+                  <Ellipsis size={20} color="#000000ff" strokeWidth={1} />
+                </TouchableOpacity>
+                 {isEditing === true && (
+                  <View>
+                    <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(id)}>
+                      <Text style={styles.removeText}>Remove</Text>
+                    </TouchableOpacity>
+                  </View>
+                 )}
             </View>
             <Text style={styles.productType}>{type}</Text>
             <View style={styles.priceQuantityContainer}>
@@ -99,6 +111,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 2,
     marginRight: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageContainer: {
     width: 80,
@@ -149,6 +163,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     minWidth: 30,
+  },
+
+  removeButton: {
+    position: 'absolute',
+    right: 1,
+    bottom: 5,
+    padding: 7,
+    backgroundColor: '#000000ff',
+    borderRadius: 20,
+    marginBottom: 5,
+    borderWidth: 1,
+  },
+
+  removeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 })
 

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ShoppingCart } from 'lucide-react-native'
+import { ChevronLeft, ShoppingCart, Check } from 'lucide-react-native'
 import { useRouter } from 'expo-router';
 import React from 'react'
 import StoreCard from '../components/StoreCard'
@@ -11,7 +11,7 @@ import CustomButton from '../components/CustomButton';
 
 const Cart = () => {
   const router = useRouter();
-  const { cart, clearCart } = useCartStore(); // ✅ added clearCart to empty the cart
+  const { cart, clearCart } = useCartStore();
   const { 
     selectedStores, 
     selectedProducts,
@@ -21,12 +21,19 @@ const Cart = () => {
     deselectAllProducts
   } = useSelectionStore();
 
+  // Get all store names from cart
   const allStoreNames = cart.map(store => store.storeName);
-  const allProductIds = cart.flatMap(store => store.products.map(product => product.id));
   
+  // Get all product IDs from cart
+  const allProductIds = cart.flatMap(store => 
+    store.products.map(product => product.id)
+  );
+  
+  // Check if all stores are selected
   const allStoresSelected = allStoreNames.length > 0 && 
     allStoreNames.every(store => selectedStores.includes(store));
 
+  // Toggle select all stores and products
   const toggleSelectAllStores = () => {
     if (allStoresSelected) {
       deselectAllStores();
@@ -37,12 +44,7 @@ const Cart = () => {
     }
   };
 
-  const handleRemoveAll = () => {
-    clearCart(); // ✅ empties all products
-    deselectAllStores();
-    deselectAllProducts();
-  };
-
+  // calculate total price
   const totalPrice = cart.reduce((sum, store) => {
     return sum + store.products.reduce((s, p) => {
       if (selectedProducts.includes(p.id)) {
@@ -68,17 +70,15 @@ const Cart = () => {
                 { backgroundColor: allStoresSelected ? '#000000ff' : '#ffffffff' }
               ]}
               onPress={toggleSelectAllStores}
-            />
+            >
+              {allStoresSelected && <Check size={20} color="#fff" strokeWidth={2} />}
+            </TouchableOpacity>
             <Text>All</Text>
           </View>
-
-          {/* ✅ Replace back button with conditional Remove All */}
-          {allStoresSelected && cart.length > 0 && (
-            <TouchableOpacity 
-              style={styles.removeAllButton} 
-              onPress={handleRemoveAll}
-            >
-              <Text style={styles.removeAllText}>Remove All</Text>
+          
+          {allStoresSelected && (
+            <TouchableOpacity style={styles.removeAllButton} onPress={() => {clearCart()}}>
+              <Text style={styles.removeText}>Remove All</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -86,7 +86,10 @@ const Cart = () => {
 
       <ScrollView style={styles.scrollView}>
         {cart.map((store) => (
-          <StoreCard key={store.storeName} storeName={store.storeName}>
+          <StoreCard 
+            key={store.storeName} 
+            storeName={store.storeName}
+          >
             {store.products.map((product) => (
               <CartCard
                 key={product.id}
@@ -100,7 +103,7 @@ const Cart = () => {
             ))}
           </StoreCard>
         ))}
-
+        
         {cart.length === 0 && (
           <View style={styles.emptyCart}>
             <Text style={styles.emptyCartText}>Your cart is empty</Text>
@@ -142,8 +145,7 @@ const styles = StyleSheet.create({
   cartText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   shippingText: {
     fontSize: 15,
@@ -152,7 +154,7 @@ const styles = StyleSheet.create({
   allBackButtonContainer: {
     flexDirection: 'row',
     marginTop: 20,
-    paddingHorizontal: 25,
+    paddingHorizontal: 18,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -169,18 +171,18 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderWidth: 1,
     borderColor: '#c9c9c9ff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   removeAllButton: {
-    backgroundColor: '#000',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: '#000000ff',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
     borderRadius: 20,
   },
-  removeAllText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
+
   scrollView: {
     flex: 1,
     padding: 10,
@@ -208,6 +210,12 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  removeText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#ffffffff',
   },
 })
 

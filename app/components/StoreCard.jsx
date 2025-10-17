@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { Store } from 'lucide-react-native';
+import { Store, Check } from 'lucide-react-native';
 import useSelectionStore from '../stores/useSelectionStore';
+import useCartStore from '../stores/cartStore';
 import React from 'react'
     
 const StoreCard = ({ storeName, children }) => {
+    const {removeFromStore} = useCartStore();
     const { selectedStores, selectStore } = useSelectionStore();
     const isSelected = selectedStores.includes(storeName);
     
@@ -22,11 +24,18 @@ const StoreCard = ({ storeName, children }) => {
                         },
                     ]}
                     onPress={() => selectStore(storeName, productIds)}
-                />
+                >
+                    {isSelected && <Check size={20} color="#fff" strokeWidth={2} />}
+                </TouchableOpacity>
                 <View style={styles.storeNameContainer}>
                     <Store size={24} color="#000000ff" strokeWidth={1} />
                     <Text style={styles.storeName}>{storeName}</Text>
                 </View>
+                {isSelected && (
+                    <TouchableOpacity style={styles.clearButton} onPress={() => removeFromStore(storeName)}>
+                        <Text style={styles.clearText}>Clear</Text>
+                    </TouchableOpacity>
+                )}
             </View>
             <View style={styles.childrenContainer}> 
                 {children}
@@ -67,6 +76,18 @@ const styles = StyleSheet.create({
     childrenContainer: {
         marginTop: 8,
         flex: 1,
+    },
+    clearButton: {
+        marginLeft: 'auto',
+        backgroundColor: '#000000ff',
+        padding: 8,
+        borderRadius: 20,
+    },
+
+    clearText: { 
+        color: '#fff' ,
+        fontWeight: 'bold', 
+        fontSize: 16 
     },
 })
 
