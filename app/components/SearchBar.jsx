@@ -1,6 +1,7 @@
-import { View, Text, TextInput, StyleSheet, } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Filter from './AdvancedFilterIcon'
 import React from 'react'
   
 const SearchBar = (props) => {
@@ -11,7 +12,9 @@ const SearchBar = (props) => {
         <TextInput placeholder={props.placeholder} style={styles.searchInput} />
       </View>
       <View style={styles.filterIconContainer}> 
-        <Ionicons name="options-outline" size={30} color="white" style={styles.filterIcon}/>
+        <TouchableOpacity onPress={props.onPress}>
+          <Filter width={52} height={52} />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   )
@@ -22,15 +25,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 13,
-        gap: 10,
+        paddingHorizontal: 10,
+        gap: 20,
     },
 
     searchBarContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 10,
-        padding: 15,
+        padding: 5,
         borderWidth: 1,
         borderColor: '#ccc',
         flex: 1,
@@ -44,14 +47,6 @@ const styles = StyleSheet.create({
     searchIcon: {
         marginLeft: 10,
     },
-
-    filterIconContainer: {
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 10,
-        backgroundColor: '#000000ff',
-    },
-    
 })
 
 export default SearchBar
