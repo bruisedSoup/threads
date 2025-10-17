@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Filter from './AdvancedFilterIcon'
 import React from 'react'
   
-const SearchBar = ({ placeholder, value, onChangeText }) => {
+const SearchBar = ({ placeholder, value, onChangeText, onPress }) => {
   const handleClear = () => {
     if (onChangeText) {
       onChangeText("");
@@ -28,7 +28,7 @@ const SearchBar = ({ placeholder, value, onChangeText }) => {
         )}
       </View>
       <View style={styles.filterIconContainer}> 
-        <TouchableOpacity onPress={props.onPress}>
+        <TouchableOpacity onPress={onPress}>
           <Filter width={52} height={52} />
         </TouchableOpacity>
       </View>
@@ -68,13 +68,6 @@ const styles = StyleSheet.create({
     clearButton: {
         padding: 5,
         marginLeft: 5,
-    },
-
-    filterIconContainer: {
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 10,
-        backgroundColor: '#000000ff',
     },
     
 })

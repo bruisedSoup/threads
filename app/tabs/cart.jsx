@@ -253,6 +253,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffffff',
   },
+
+  removeAllText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#ffffffff',
+  }
 })
 
 export default Cart;

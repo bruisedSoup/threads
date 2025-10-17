@@ -4,7 +4,7 @@ import CircledIcon from './CircledIcon';
 import CheckIcon from './checkicon';
 import useSelectionStore from '../stores/useSelectionStore';
 import useCartStore from '../stores/cartStore';
-import CircledIcon from './CircledIcon';
+import React, { useState } from 'react'
 
 const CartCard = ({
   id,
