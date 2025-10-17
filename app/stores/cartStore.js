@@ -43,24 +43,12 @@ const useCartStore = create((set) => ({
       return { cart: updatedCart };
     }),
 
-  removeFromCart: (productId) =>
-    set((state) => {
-      const updatedCart = state.cart.map(store => ({
-        ...store,
-        products: store.products.filter(product => product.id !== productId)
-      })).filter(store => store.products.length > 0); // Remove store if no products left
-      return { cart: updatedCart };
-    }),
-
-  removeFromStore: (storeName) =>
+  removeStore: (storeName) =>
     set((state) => ({
-      cart: state.cart.filter((store) => store.storeName !== storeName),
+      cart: state.cart.filter(store => store.storeName !== storeName)
     })),
 
-  clearCart: () =>
-    set(() => ({
-      cart: [],
-    })),
+  clearCart: () => set({ cart: [] }),
 }));
 
 export default useCartStore;

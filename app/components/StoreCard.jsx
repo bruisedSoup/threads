@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { Store, Check } from 'lucide-react-native';
+import { Store } from 'lucide-react-native';
+import CheckIcon from './checkicon';
 import useSelectionStore from '../stores/useSelectionStore';
 import useCartStore from '../stores/cartStore';
 import React from 'react'
     
-const StoreCard = ({ storeName, children }) => {
-    const {removeFromStore} = useCartStore();
+const StoreCard = ({ storeName, children, onRemove }) => {
     const { selectedStores, selectStore } = useSelectionStore();
     const isSelected = selectedStores.includes(storeName);
     
@@ -15,25 +15,29 @@ const StoreCard = ({ storeName, children }) => {
     return (
         <View style={styles.storeCardContainer}>
             <View style={styles.headerContainer}>
-                <TouchableOpacity
-                    style={[
-                        styles.selectAllButton,
-                        { 
-                            backgroundColor: isSelected ? '#000000ff' : '#ffffffff',
-                            borderColor: isSelected ? '#000000ff' : '#ccc'
-                        },
-                    ]}
-                    onPress={() => selectStore(storeName, productIds)}
-                >
-                    {isSelected && <Check size={20} color="#fff" strokeWidth={2} />}
-                </TouchableOpacity>
-                <View style={styles.storeNameContainer}>
-                    <Store size={24} color="#000000ff" strokeWidth={1} />
-                    <Text style={styles.storeName}>{storeName}</Text>
+                <View style={styles.storeInfoContainer}>
+                    <TouchableOpacity
+                        style={styles.selectButtonWrapper}
+                        onPress={() => selectStore(storeName, productIds)}
+                    >
+                        {isSelected ? (
+                            <CheckIcon width={24} height={24} />
+                        ) : (
+                            <View style={styles.uncheckedCircle} />
+                        )}
+                    </TouchableOpacity>
+                    <View style={styles.storeNameContainer}>
+                        <Store size={24} color="#000000ff" strokeWidth={1} />
+                        <Text style={styles.storeName}>{storeName}</Text>
+                    </View>
                 </View>
-                {isSelected && (
-                    <TouchableOpacity style={styles.clearButton} onPress={() => removeFromStore(storeName)}>
-                        <Text style={styles.clearText}>Clear</Text>
+                
+                {isSelected && onRemove && (
+                    <TouchableOpacity 
+                        style={styles.removeButton}
+                        onPress={onRemove}
+                    >
+                        <Text style={styles.removeButtonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -55,23 +59,46 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         marginBottom: 8,
     },
-    selectAllButton: {
+    storeInfoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    selectButtonWrapper: {
+        marginRight: 12,
+    },
+    uncheckedCircle: {
         width: 24,
         height: 24,
         borderRadius: 12,
-        borderWidth: 2,
-        marginRight: 12,
+        borderWidth: 1,
+        borderColor: '#292526',
+        backgroundColor: 'transparent',
     },
     storeNameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
     },
     storeName: {
         marginLeft: 8,
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    removeButton: {
+        backgroundColor: '#000',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 15,
+        marginLeft: 8,
+    },
+    removeButtonText: {
+        color: '#fff',
+        fontWeight: '600',
+        fontSize: 13,
     },
     childrenContainer: {
         marginTop: 8,

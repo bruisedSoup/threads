@@ -15,6 +15,7 @@ import { products } from '../data/product';
 
 const Home = () => {
   const [selectedFilter, setSelectedFilter] = useState("All Items");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Define filter icons and matching product types
   const filterIcons = [
@@ -33,10 +34,23 @@ const Home = () => {
   ) || [];
 
   // Filter by type
-  const filteredProducts =
+  let filteredProducts =
     selectedFilter === "All Items"
       ? productsFlat
       : productsFlat.filter(product => product.type === selectedFilter);
+
+  // Filter by search query
+  if (searchQuery.trim() !== "") {
+    filteredProducts = filteredProducts.filter(product => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        product.title.toLowerCase().includes(searchLower) ||
+        product.type.toLowerCase().includes(searchLower) ||
+        product.storeName.toLowerCase().includes(searchLower) ||
+        product.description.toLowerCase().includes(searchLower)
+      );
+    });
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,7 +58,11 @@ const Home = () => {
       <View style={{ zIndex: 10, backgroundColor: '#fff' }}>
         <WelcomeHeader name="User One" />
         <View style={styles.searchBarContainer}>
-          <SearchBar placeholder="Search clothes..." />
+          <SearchBar 
+            placeholder="Search clothes..." 
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
       </View>
 
@@ -125,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     marginTop: -10,
-    marginBottom: 10,
+    color: 'black',
   },
   filterTabContainer: {
     paddingHorizontal: 25,

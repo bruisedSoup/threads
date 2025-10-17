@@ -17,12 +17,9 @@ const Favorites = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#000" strokeWidth={1} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Wishlist</Text>
-        <TouchableOpacity style={styles.cartButton} onPress={() => router.push('../tabs/cart')}>
-          <CartIcon width={24} height={24} />
+        <Text style={styles.headerText}>Wishlist</Text>
+        <TouchableOpacity style={styles.cartIcon} onPress={() => router.push('/tabs/cart')}>
+          <CartIcon />
         </TouchableOpacity>
       </View>
 
@@ -86,9 +83,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
   },
-  cartButton: {
+  cartIcon: {
+    position: 'absolute',
+    right: 12,
+    zIndex: 1,
+  },
+  // 🔹 Added gray line below header (like the Following screen)
+  headerDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    width: '100%',
+  },
+  numlikesContainer: {
+    alignItems: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
